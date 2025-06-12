@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import factoryAbi from "@/abi/TokenBundleFactory.json";
 import bundleAbi from "@/abi/TokenBundle.json";
 
@@ -11,7 +11,6 @@ export default function Home() {
   const [usdc, setUsdc] = useState("");
   const [bundle, setBundle] = useState<string | null>(null);
 
-  const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
   const handleCreate = async (e: React.FormEvent) => {
