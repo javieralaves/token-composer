@@ -1,0 +1,15 @@
+[
+  {
+    "inputs": [
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "string", "name": "symbol", "type": "string" },
+      { "internalType": "address", "name": "usdc", "type": "address" },
+      { "internalType": "address[]", "name": "tokens", "type": "address[]" },
+      { "internalType": "uint32[]", "name": "weights", "type": "uint32[]" }
+    ],
+    "name": "createBundle",
+    "outputs": [ { "internalType": "address", "name": "bundle", "type": "address" } ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
