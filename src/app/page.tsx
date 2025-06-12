@@ -1,20 +1,43 @@
 "use client";
 
 import { useState } from "react";
+import { useAccount, useWriteContract } from "wagmi";
+import factoryAbi from "@/abi/TokenBundleFactory.json";
+import bundleAbi from "@/abi/TokenBundle.json";
 
 export default function Home() {
   const [name, setName] = useState("");
   const [tokens, setTokens] = useState("");
   const [usdc, setUsdc] = useState("");
+  const [bundle, setBundle] = useState<string | null>(null);
 
-  const handleCreate = (e: React.FormEvent) => {
+  const { address } = useAccount();
+  const { writeContractAsync } = useWriteContract();
+
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ name, tokens });
+    if (!process.env.NEXT_PUBLIC_FACTORY_ADDRESS) return;
+    const list = tokens.split(",").map((t) => t.trim());
+    const weights = Array(list.length).fill(100 / list.length);
+    const result = await writeContractAsync({
+      abi: factoryAbi,
+      address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+      functionName: "createBundle",
+      args: [name, name.slice(0, 3).toUpperCase(), "0x", list, weights],
+    });
+    // address of new bundle is returned
+    setBundle(result as unknown as string);
   };
 
-  const handleDeposit = (e: React.FormEvent) => {
+  const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ usdc });
+    if (!bundle) return;
+    await writeContractAsync({
+      abi: bundleAbi,
+      address: bundle as `0x${string}`,
+      functionName: "deposit",
+      args: [BigInt(usdc)],
+    });
   };
 
   return (
