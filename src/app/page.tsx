@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useWriteContract } from "wagmi";
+import ConnectButton from "@/components/ConnectButton";
 import factoryAbi from "@/abi/TokenBundleFactory.json";
 import bundleAbi from "@/abi/TokenBundle.json";
 
 export default function Home() {
   const [name, setName] = useState("");
   const [tokens, setTokens] = useState("");
-  const [usdc, setUsdc] = useState("");
+  const [usdcAmount, setUsdcAmount] = useState("");
+  const [usdcAddress, setUsdcAddress] = useState("");
   const [bundle, setBundle] = useState<string | null>(null);
 
   const { writeContractAsync } = useWriteContract();
@@ -22,7 +24,13 @@ export default function Home() {
       abi: factoryAbi,
       address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
       functionName: "createBundle",
-      args: [name, name.slice(0, 3).toUpperCase(), "0x", list, weights],
+      args: [
+        name,
+        name.slice(0, 3).toUpperCase(),
+        usdcAddress as `0x${string}`,
+        list,
+        weights,
+      ],
     });
     // address of new bundle is returned
     setBundle(result as unknown as string);
@@ -35,12 +43,13 @@ export default function Home() {
       abi: bundleAbi,
       address: bundle as `0x${string}`,
       functionName: "deposit",
-      args: [BigInt(usdc)],
+      args: [BigInt(usdcAmount)],
     });
   };
 
   return (
     <main className="p-8 flex flex-col gap-8">
+      <ConnectButton />
       <div>
         <h1 className="text-2xl font-semibold mb-4">Create bundle</h1>
         <form onSubmit={handleCreate} className="flex flex-col gap-2 max-w-sm">
@@ -56,6 +65,12 @@ export default function Home() {
             placeholder="Token addresses (comma separated)"
             className="border p-2"
           />
+          <input
+            value={usdcAddress}
+            onChange={(e) => setUsdcAddress(e.target.value)}
+            placeholder="USDC address"
+            className="border p-2"
+          />
           <button className="bg-blue-500 text-white p-2" type="submit">
             Create
           </button>
@@ -66,8 +81,8 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-4">Deposit USDC</h2>
         <form onSubmit={handleDeposit} className="flex flex-col gap-2 max-w-sm">
           <input
-            value={usdc}
-            onChange={(e) => setUsdc(e.target.value)}
+            value={usdcAmount}
+            onChange={(e) => setUsdcAmount(e.target.value)}
             placeholder="Amount"
             className="border p-2"
           />

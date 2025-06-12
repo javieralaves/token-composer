@@ -26,4 +26,10 @@ npx hardhat test
 
 ## Environment
 
-`NEXT_PUBLIC_FACTORY_ADDRESS` should point to a deployed `TokenBundleFactory` when interacting with the app.
+Create a `.env.local` file containing the address of a deployed `TokenBundleFactory` on Base Sepolia:
+
+```bash
+NEXT_PUBLIC_FACTORY_ADDRESS=0xYourFactoryAddress
+```
+
+Restart the dev server after adding the file.
